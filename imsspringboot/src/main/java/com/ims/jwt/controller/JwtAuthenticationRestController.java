@@ -1,4 +1,4 @@
-package com.ims.jwt;
+package com.ims.jwt.controller;
 
 import java.util.Objects;
 
@@ -21,6 +21,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ims.jwt.AuthenticationException;
+import com.ims.jwt.dto.JwtTokenRequest;
+import com.ims.jwt.dto.JwtTokenResponse;
+import com.ims.jwt.dto.JwtUserDetails;
+import com.ims.jwt.utility.JwtTokenUtil;
+
 
 @RestController
 @CrossOrigin(origins = "${allowed.request.url.angular}")
@@ -36,7 +42,7 @@ public class JwtAuthenticationRestController {
 	private JwtTokenUtil jwtTokenUtil;
 
 	@Autowired
-	private UserDetailsService jwtInMemoryUserDetailsService;
+	private UserDetailsService jwtUsrDetailsService;
 
 	@RequestMapping(value = "${jwt.get.token.uri}", method = RequestMethod.POST)
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtTokenRequest authenticationRequest)
@@ -44,7 +50,7 @@ public class JwtAuthenticationRestController {
 
 		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
-		final UserDetails userDetails = jwtInMemoryUserDetailsService
+		final UserDetails userDetails = jwtUsrDetailsService
 				.loadUserByUsername(authenticationRequest.getUsername());
 
 		final String token = jwtTokenUtil.generateToken(userDetails);
@@ -56,8 +62,8 @@ public class JwtAuthenticationRestController {
 	public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request) {
 		String authToken = request.getHeader(tokenHeader);
 		final String token = authToken.substring(7);
-		String username = jwtTokenUtil.getUsernameFromToken(token);
-		JwtUserDetails user = (JwtUserDetails) jwtInMemoryUserDetailsService.loadUserByUsername(username);
+//		String username = jwtTokenUtil.getUsernameFromToken(token);
+//		JwtUserDetails user = (JwtUserDetails) jwtUsrDetailsService.loadUserByUsername(username);
 
 		if (jwtTokenUtil.canTokenBeRefreshed(token)) {
 			String refreshedToken = jwtTokenUtil.refreshToken(token);

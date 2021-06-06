@@ -1,4 +1,4 @@
-package com.ims.jwt;
+package com.ims.jwt.dto;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -1,4 +1,4 @@
-package com.ims.jwt;
+package com.ims.userdetails;
 
 import java.util.Date;
 
@@ -6,6 +6,8 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.ims.jwt.dto.JwtUserDetails;
 
 
 
@@ -15,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class UserDBService {
 	static User dummyUser = new User(Integer.MAX_VALUE, "", "", "", "", "", new Date());
 	@Autowired
-	UserRepoForUserTable userRepo;
+	UserRepo userRepo;
 
 	public User getUserByUserName(String userName) {
 		return getUserByUserId(userRepo.findByUserName(userName).getUserId());

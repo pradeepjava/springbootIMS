@@ -1,4 +1,4 @@
-package com.ims.jwt;
+package com.ims.userdetails;
 
 import java.util.Date;
 

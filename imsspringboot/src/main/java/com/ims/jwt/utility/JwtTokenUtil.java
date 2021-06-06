@@ -1,4 +1,4 @@
-package com.ims.jwt;
+package com.ims.jwt.utility;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -9,6 +9,8 @@ import java.util.function.Function;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+
+import com.ims.jwt.dto.JwtUserDetails;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Clock;
@@ -63,16 +65,15 @@ public class JwtTokenUtil implements Serializable {
 
 	public String generateToken(UserDetails userDetails) {
 		Map<String, Object> claims = new HashMap<>();
-		return doGenerateToken(claims, userDetails.getUsername());
+		return doGenerateToken(claims, userDetails);
 	}
 
-	//to set role.
-	private String doGenerateToken(Map<String, Object> claims, String subject) {
+	private String doGenerateToken(Map<String, Object> claims, UserDetails userDetails) {
 		final Date createdDate = clock.now();
 		final Date expirationDate = calculateExpirationDate(createdDate);
 
 		
-		return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(createdDate)
+		return Jwts.builder().setClaims(claims).setSubject(userDetails.getUsername()).setAudience(userDetails.getAuthorities().iterator().next().getAuthority()).setIssuedAt(createdDate)
 				.setExpiration(expirationDate).signWith(SignatureAlgorithm.HS512, secret).compact();
 	}
 
