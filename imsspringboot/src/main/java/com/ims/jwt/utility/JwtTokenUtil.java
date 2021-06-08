@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import com.ims.jwt.dto.JwtUserDetails;
+import com.ims.userdetails.CredentialStatus;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Clock;
@@ -69,12 +70,17 @@ public class JwtTokenUtil implements Serializable {
 	}
 
 	private String doGenerateToken(Map<String, Object> claims, UserDetails userDetails) {
-		final Date createdDate = clock.now();
-		final Date expirationDate = calculateExpirationDate(createdDate);
-
-		
-		return Jwts.builder().setClaims(claims).setSubject(userDetails.getUsername()).setAudience(userDetails.getAuthorities().iterator().next().getAuthority()).setIssuedAt(createdDate)
-				.setExpiration(expirationDate).signWith(SignatureAlgorithm.HS512, secret).compact();
+		if(userDetails instanceof JwtUserDetails)
+		{
+			JwtUserDetails jwtDetails = (JwtUserDetails)userDetails;
+			final Date createdDate = clock.now();
+			final Date expirationDate = calculateExpirationDate(createdDate);
+			return Jwts.builder().setClaims(claims).setSubject(jwtDetails.getName())
+					.setAudience(userDetails.getAuthorities().iterator().next().getAuthority())
+					.setIssuedAt(createdDate)
+					.setExpiration(expirationDate).signWith(SignatureAlgorithm.HS512, secret).compact();
+		}
+		return CredentialStatus.INVALID_CREDENTIALS.name();
 	}
 
 	public Boolean canTokenBeRefreshed(String token) {

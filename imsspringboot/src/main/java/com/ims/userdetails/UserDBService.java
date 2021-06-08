@@ -20,7 +20,12 @@ public class UserDBService {
 	UserRepo userRepo;
 
 	public User getUserByUserName(String userName) {
-		return getUserByUserId(userRepo.findByUserName(userName).getUserId());
+		User findByUserName = userRepo.findByUserName(userName);
+		if(findByUserName!=null)
+		{
+			return getUserByUserId(findByUserName.getUserId());
+		}
+		return dummyUser;
 	}
 
 	public User getUserByUserId(Integer userId) {
@@ -32,11 +37,11 @@ public class UserDBService {
 	}
 
 	public JwtUserDetails getJWTUserByUserName(String userName) {
-		User user = getUserByUserId(userRepo.findByUserName(userName).getUserId());
+		User user = getUserByUserId(getUserByUserName(userName).getUserId());
 		if (user.getUserId().equals(Integer.MAX_VALUE)) {
 			return null;
 		}
-		return new JwtUserDetails(user.getUserId(), user.getUserName(), user.getPassword(), user.getRole(),
+		return new JwtUserDetails(user.getUserId(), user.getUserName(), user.getPassword(),user.getName(), user.getRole(),
 				user.getStatus());
 
 	}

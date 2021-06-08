@@ -24,12 +24,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ims.jwt.AuthenticationException;
 import com.ims.jwt.dto.JwtTokenRequest;
 import com.ims.jwt.dto.JwtTokenResponse;
-import com.ims.jwt.dto.JwtUserDetails;
 import com.ims.jwt.utility.JwtTokenUtil;
-
+import com.ims.userdetails.CredentialStatus;
 
 @RestController
-@CrossOrigin(origins = "${allowed.request.url.angular}")
+@CrossOrigin(origins = "${allowed.origin}")
 public class JwtAuthenticationRestController {
 
 	@Value("${jwt.http.request.header}")
@@ -48,14 +47,22 @@ public class JwtAuthenticationRestController {
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtTokenRequest authenticationRequest)
 			throws AuthenticationException {
 
-		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+		CredentialStatus credentialStatus = authenticate(authenticationRequest.getUsername(),
+				authenticationRequest.getPassword());
+		return getResponse(authenticationRequest, credentialStatus);
+	}
 
-		final UserDetails userDetails = jwtUsrDetailsService
-				.loadUserByUsername(authenticationRequest.getUsername());
-
-		final String token = jwtTokenUtil.generateToken(userDetails);
-
-		return ResponseEntity.ok(new JwtTokenResponse(token));
+	private ResponseEntity<?> getResponse(JwtTokenRequest authenticationRequest, CredentialStatus credentialStatus) {
+		switch (credentialStatus) {
+		case INVALID_CREDENTIALS:
+		case USER_DISABLED:
+			return ResponseEntity.ok(new JwtTokenResponse(credentialStatus.name()));
+		default:
+			final UserDetails userDetails = jwtUsrDetailsService
+					.loadUserByUsername(authenticationRequest.getUsername());
+			final String token = jwtTokenUtil.generateToken(userDetails);
+			return ResponseEntity.ok(new JwtTokenResponse(token));
+		}
 	}
 
 	@RequestMapping(value = "${jwt.refresh.token.uri}", method = RequestMethod.GET)
@@ -78,16 +85,21 @@ public class JwtAuthenticationRestController {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
 	}
 
-	private void authenticate(String username, String password) {
-		Objects.requireNonNull(username);
-		Objects.requireNonNull(password);
-
+	private CredentialStatus authenticate(String username, String password) {
+		CredentialStatus status = null;
 		try {
+			Objects.requireNonNull(username);
+			Objects.requireNonNull(password);
 			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+			status = CredentialStatus.VALID;
 		} catch (DisabledException e) {
+			status = CredentialStatus.USER_DISABLED;
 			throw new AuthenticationException("USER_DISABLED", e);
 		} catch (BadCredentialsException e) {
+			status = CredentialStatus.INVALID_CREDENTIALS;
 			throw new AuthenticationException("INVALID_CREDENTIALS", e);
+		} finally {
+			return status;
 		}
 	}
 }

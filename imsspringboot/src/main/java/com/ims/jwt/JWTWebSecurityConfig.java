@@ -29,7 +29,7 @@ public class JWTWebSecurityConfig extends WebSecurityConfigurerAdapter {
 	private JwtUnAuthorizedResponseAuthenticationEntryPoint jwtUnAuthorizedResponseAuthenticationEntryPoint;
 
 	@Autowired
-	private UserDetailsService jwtInMemoryUserDetailsService;
+	private UserDetailsService jwtUserDetailsService;
 
 	@Autowired
 	private JwtTokenAuthorizationOncePerRequestFilter jwtAuthenticationTokenFilter;
@@ -39,7 +39,7 @@ public class JWTWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(jwtInMemoryUserDetailsService).passwordEncoder(passwordEncoderBean());
+		auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoderBean());
 	}
 
 	@Bean
@@ -62,17 +62,17 @@ public class JWTWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		httpSecurity.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
-		httpSecurity.headers().frameOptions().sameOrigin() // H2 Console Needs this setting
-				.cacheControl(); // disable caching
+//		httpSecurity.headers().frameOptions().sameOrigin() // H2 Console Needs this setting
+//				.cacheControl(); // disable caching
 	}
 
 	@Override
 	public void configure(WebSecurity webSecurity) throws Exception {
 		webSecurity.ignoring().antMatchers(HttpMethod.POST, authenticationPath)
-				.antMatchers(HttpMethod.OPTIONS, "/**")
-				.and().ignoring()
-				.antMatchers(HttpMethod.GET, "/" // Other Stuff You want to Ignore
-				).and().ignoring()
-				.antMatchers("/h2-console/**/**");// Should not be done in Production!
+				.antMatchers(HttpMethod.OPTIONS, "/**");
+//				.and().ignoring()
+//				.antMatchers(HttpMethod.GET, "/" // Other Stuff You want to Ignore
+//				).and().ignoring()
+//				.antMatchers("/h2-console/**/**");// Should not be done in Production!
 	}
 }

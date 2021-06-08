@@ -18,12 +18,14 @@ public class JwtUserDetails implements UserDetails {
 	private final String username;
 	private final String password;
 	private final boolean isLocked;
+	private final String name;
 	private final Collection<? extends GrantedAuthority> authorities;
 
-	public JwtUserDetails(Integer id, String username, String password, String role, String lockedStatus) {
+	public JwtUserDetails(Integer id, String username, String password, String role, String name, String lockedStatus) {
 		this.userId = id;
 		this.username = username;
 		this.password = password;
+		this.name=name;
 
 		List<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>();
 		authorities.add(new SimpleGrantedAuthority(role));
@@ -38,11 +40,10 @@ public class JwtUserDetails implements UserDetails {
 	}
 
 	@JsonIgnore
-	public boolean isLocked() {
-
-		return isLocked;
+	public String getName()
+	{
+		return name;
 	}
-
 	@JsonIgnore
 	public Integer getId() {
 		return userId;
@@ -84,7 +85,8 @@ public class JwtUserDetails implements UserDetails {
 
 	@Override
 	public boolean isEnabled() {
-		return true;
+		return isLocked;
+//		return false;
 	}
 
 }
