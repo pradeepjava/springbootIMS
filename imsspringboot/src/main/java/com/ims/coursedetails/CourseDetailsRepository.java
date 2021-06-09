@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CourseDetailsRepository extends JpaRepository<CourseDTO, Integer> {
-	List<CourseDTO>findAllByApproveStatus(String status);
-	List<CourseDTO>findAllByStatus(String status);
+public interface CourseDetailsRepository extends JpaRepository<CourseDetails, Integer> {
+	List<CourseDetails>findAllByApproveStatus(String status);
+	List<CourseDetails>findAllByStatus(String status);
 }

@@ -1,6 +1,7 @@
 package com.ims.coursedetails;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,23 +12,35 @@ public class CourseDetailsService {
 	@Autowired
 	CourseDetailsRepository repo;
 
-	public void saveCourse(CourseDTO course) {
+	public void saveCourse(CourseDetails course) {
 		repo.save(course);
 	}
 
-	public CourseDTO getCourseById(Integer id) {
-		return repo.getById(id);
+	public Optional<CourseDetails> getCourseById(Integer id) {
+		return repo.findById(id);
 	}
 
-	public List<CourseDTO> getUnApprovedCourse() {
+	public List<CourseDetails> getUnApprovedCourse() {
 		return repo.findAllByApproveStatus("unapproved");
 	}
 
-	public List<CourseDTO> getActiveCourse() {
-		return repo.findAllByApproveStatus("active");
+	public List<CourseDetails> getActiveCourse() {
+		return repo.findAllByStatus("active");
 	}
 
-	public List<CourseDTO> getDeactiveCourse() {
-		return repo.findAllByApproveStatus("inactive");
+	public List<CourseDetails> getInactiveCourse() {
+		return repo.findAllByStatus("inactive");
+	}
+
+	public List<CourseDetails> getAllCourse() {
+		return repo.findAll();
+	}
+
+	public CourseDetails updateCourse(Integer id, String name, Integer fee) {
+		CourseDetails existing = repo.getById(id);
+		existing.setCourseName(name);
+		existing.setCourseFee(fee);
+		repo.save(existing);
+		return existing;
 	}
 }
