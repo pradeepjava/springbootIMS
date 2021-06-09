@@ -1,4 +1,4 @@
-package com.ims.jwt.controller;
+package com.ims.controllers;
 
 import java.util.Objects;
 
@@ -92,13 +92,15 @@ public class JwtAuthenticationRestController {
 			Objects.requireNonNull(password);
 			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 			status = CredentialStatus.VALID;
-		} catch (DisabledException e) {
-			status = CredentialStatus.USER_DISABLED;
-			throw new AuthenticationException("USER_DISABLED", e);
-		} catch (BadCredentialsException e) {
+		} 
+		catch (BadCredentialsException e) {
 			status = CredentialStatus.INVALID_CREDENTIALS;
 			throw new AuthenticationException("INVALID_CREDENTIALS", e);
-		} finally {
+		}
+		catch (DisabledException e) {
+			status = CredentialStatus.USER_DISABLED;
+			throw new AuthenticationException("USER_DISABLED", e);
+		}  finally {
 			return status;
 		}
 	}

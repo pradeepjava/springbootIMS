@@ -41,7 +41,7 @@ public class UserDBService {
 		if (user.getUserId().equals(Integer.MAX_VALUE)) {
 			return null;
 		}
-		return new JwtUserDetails(user.getUserId(), user.getUserName(), user.getPassword(),user.getName(), user.getRole(),
+		return new JwtUserDetails(user.getUserId(), user.getUserName(), user.getPassword(),user.getRole() , user.getName() ,
 				user.getStatus());
 
 	}
