@@ -1,4 +1,4 @@
-package com.ims.jwt;
+package com.ims.exception;
 
 public class AuthenticationException extends RuntimeException {
 	public AuthenticationException(String message, Throwable cause) {

@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ims.jwt.AuthenticationException;
+import com.ims.exception.AuthenticationException;
 import com.ims.jwt.dto.JwtTokenRequest;
 import com.ims.jwt.dto.JwtTokenResponse;
 import com.ims.jwt.utility.JwtTokenUtil;

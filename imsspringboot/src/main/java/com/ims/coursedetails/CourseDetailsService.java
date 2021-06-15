@@ -1,5 +1,6 @@
 package com.ims.coursedetails;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,8 +13,12 @@ public class CourseDetailsService {
 	@Autowired
 	CourseDetailsRepository repo;
 
-	public void saveCourse(CourseDetails course) {
-		repo.save(course);
+	public CourseDetails saveCourse(CourseDetails course) {
+		return repo.save(course);
+	}
+	
+	public Optional<CourseDetails> getCourseByCourseName(String courseName) {
+		return repo.getByCourseName(courseName);
 	}
 
 	public Optional<CourseDetails> getCourseById(Integer id) {

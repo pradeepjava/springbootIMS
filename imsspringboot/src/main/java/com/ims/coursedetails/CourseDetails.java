@@ -27,7 +27,11 @@ public class CourseDetails {
 	@Column(name = "approvestatus", columnDefinition = "text default 'unapproved'")
 	String approveStatus = "unapproved";
 
-	public CourseDetails() {
-
+	public CourseDetails( int id) {
+		this.courseId=id;
+	}
+	
+	public CourseDetails()
+	{
 	}
 }
