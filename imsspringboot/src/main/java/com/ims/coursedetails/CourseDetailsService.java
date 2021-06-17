@@ -1,6 +1,5 @@
 package com.ims.coursedetails;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +29,7 @@ public class CourseDetailsService {
 	}
 
 	public List<CourseDetails> getActiveCourse() {
-		return repo.findAllByStatus("active");
+		return repo.findAllByStatus("Active");
 	}
 
 	public List<CourseDetails> getInactiveCourse() {
@@ -41,11 +40,16 @@ public class CourseDetailsService {
 		return repo.findAll();
 	}
 
-	public CourseDetails updateCourse(Integer id, String name, Integer fee) {
-		CourseDetails existing = repo.getById(id);
-		existing.setCourseName(name);
-		existing.setCourseFee(fee);
-		repo.save(existing);
-		return existing;
+	public void deleteCourse(Integer id) {
+		repo.delete(repo.getById(id));
+	}
+
+	public CourseDetails updateCourse(CourseDetails details) {
+		repo.save(details);
+		return details;
+	}
+
+	public List<CourseDetails> serchCourseContainingName(String text) {
+		return repo.findAllActiveUsers(text);
 	}
 }
