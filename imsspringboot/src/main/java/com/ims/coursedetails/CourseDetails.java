@@ -1,5 +1,7 @@
 package com.ims.coursedetails;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -24,14 +26,15 @@ public class CourseDetails {
 	Integer courseFee;
 	@Column(name = "status")
 	String status;
-	@Column(name = "approvestatus", columnDefinition = "text default 'unapproved'")
-	String approveStatus = "unapproved";
+	@Column(name = "approvestatus", columnDefinition = "text default 'Unapproved'")
+	String approveStatus = "Unapproved";
+	@Column(name = "approvedate")
+	Date approveDate;
 
-	public CourseDetails( int id) {
-		this.courseId=id;
+	public CourseDetails(int id) {
+		this.courseId = id;
 	}
-	
-	public CourseDetails()
-	{
+
+	public CourseDetails() {
 	}
 }

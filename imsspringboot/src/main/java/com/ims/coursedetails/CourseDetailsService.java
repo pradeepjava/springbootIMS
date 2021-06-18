@@ -25,7 +25,7 @@ public class CourseDetailsService {
 	}
 
 	public List<CourseDetails> getUnApprovedCourse() {
-		return repo.findAllByApproveStatus("unapproved");
+		return repo.findAllByApproveStatus("Unapproved");
 	}
 
 	public List<CourseDetails> getActiveCourse() {
@@ -33,7 +33,7 @@ public class CourseDetailsService {
 	}
 
 	public List<CourseDetails> getInactiveCourse() {
-		return repo.findAllByStatus("inactive");
+		return repo.findAllByStatus("Inactive");
 	}
 
 	public List<CourseDetails> getAllCourse() {

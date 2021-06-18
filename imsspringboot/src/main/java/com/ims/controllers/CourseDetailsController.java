@@ -2,8 +2,10 @@ package com.ims.controllers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -43,20 +45,6 @@ public class CourseDetailsController {
 		}
 	}
 
-//	@GetMapping(path="/{courseName}")
-//	public ResponseEntity<Object> getCourseByCourseName(@PathVariable String courseName)
-//	{
-//	
-//	Optional<CourseDetails> optionalValue = courseService.getCourseByCourseName(courseName);
-//	
-//	
-//	if(optionalValue.isPresent())
-//	{
-//		return new ResponseEntity<Object>(optionalValue.get(),HttpStatus.OK);
-//	}
-//	
-//	}
-
 	@GetMapping(path = "/{id}")
 	public CourseDetails getCourseDetailsById(@PathVariable int id) {
 		return courseService.getCourseById(id).get();
@@ -77,7 +65,7 @@ public class CourseDetailsController {
 		return courseService.getActiveCourse();
 	}
 
-	@GetMapping(path = "/inActive")
+	@GetMapping(path = "/inactive")
 	public List<CourseDetails> getInActive() {
 		return courseService.getInactiveCourse();
 	}
@@ -87,12 +75,33 @@ public class CourseDetailsController {
 		courseService.deleteCourse(id);
 	}
 
+	@PutMapping(path = "/approveAll")
+	public ResponseEntity<?> approveCourses(@RequestBody List<CourseDetails> listCourseDetails) {
+
+		listCourseDetails.stream().map(c -> {
+			c.setApproveStatus("Approved");
+			return c;
+		}).forEach(details -> updateCourseByDate(details));
+		return new ResponseEntity<HttpStatus>(HttpStatus.OK);
+	}
+
+	private void updateCourseByDate(CourseDetails courseDetails) {
+		CourseDetails existing = courseService.getCourseById(courseDetails.getCourseId()).get();
+		existing.setCourseName(courseDetails.getCourseName());
+		existing.setCourseFee(courseDetails.getCourseFee());
+		existing.setStatus(courseDetails.getStatus());// changing here
+		existing.setApproveStatus(courseDetails.getApproveStatus());
+		existing.setApproveDate(new Date());
+		courseService.updateCourse(existing);
+	}
+
 	@PutMapping(path = "/update")
 	public ResponseEntity<CourseDetails> updateCourse(@RequestBody CourseDetails courseDetails) {
 		CourseDetails existing = courseService.getCourseById(courseDetails.getCourseId()).get();
 		existing.setCourseName(courseDetails.getCourseName());
 		existing.setCourseFee(courseDetails.getCourseFee());
-		existing.setStatus(courseDetails.getStatus());
+		existing.setStatus(courseDetails.getStatus());// changing here
+		existing.setApproveStatus(courseDetails.getApproveStatus());
 		courseService.updateCourse(existing);
 		return new ResponseEntity<CourseDetails>(existing, HttpStatus.OK);
 	}
