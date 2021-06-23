@@ -9,11 +9,13 @@ import javax.persistence.Table;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @Entity
 @Table(name = "image_table")
 @NoArgsConstructor
+@ToString
 public class ImageDetails {
 
 	public ImageDetails(int id,String name, String type, byte[] picByte) {
@@ -37,6 +39,6 @@ public class ImageDetails {
 
     //image bytes can have large lengths so we specify a value
     //which is more than the default length for picByte column
-	@Column(name = "picbyte", length = 1000)
+	@Column(name = "picbyte", length = 2000)
 	private byte[] picbyte;
 }

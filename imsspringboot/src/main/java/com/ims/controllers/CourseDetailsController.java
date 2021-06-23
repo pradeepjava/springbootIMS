@@ -1,5 +1,6 @@
 package com.ims.controllers;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -21,8 +22,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ims.coursedetails.CompleteCourseDetails;
+import com.ims.coursedetails.CourseDescription;
+import com.ims.coursedetails.CourseDescriptionRepo;
 import com.ims.coursedetails.CourseDetails;
 import com.ims.coursedetails.CourseDetailsService;
+import com.ims.coursedetails.ImageDetails;
+import com.ims.coursedetails.ImageRepo;
 import com.ims.exception.ObjectAlreadyExistsInDBException;
 
 @RestController
@@ -32,6 +38,26 @@ public class CourseDetailsController {
 
 	@Autowired
 	CourseDetailsService courseService;
+
+	@Autowired
+	CourseDescriptionRepo courseDescriptionRepo;
+
+	@Autowired
+	ImageDetailsController imgController;
+
+	@GetMapping(path = "/courseDescription/All")
+	public List<CourseDescription> getAllCourseDescription() {
+		return courseDescriptionRepo.findAll();
+	}
+	@GetMapping(path = "/courseDescription/{id}")
+	public CourseDescription getAllCourseDescription(@PathVariable("id") int descriptionId) {
+		return courseDescriptionRepo.getById(descriptionId);
+	}
+
+	@PostMapping("/saveCourseDescription")
+	public CourseDescription saveCourseDescription(@RequestBody CourseDescription courseDescription) {
+		return courseDescriptionRepo.save(courseDescription);
+	}
 
 	@PostMapping(path = "/saveCourse")
 	public CourseDetails saveCourse(@RequestBody CourseDetails courseDetails) {
@@ -50,6 +76,29 @@ public class CourseDetailsController {
 		return courseService.getCourseById(id).get();
 	}
 
+//	@GetMapping(path = "/completeCourse/{id}")
+//	public CompleteCourseDetails getCompleteCourseDetailsById(@PathVariable int id) {
+//		CourseDetails courseDetails = courseService.getCourseById(id).get();
+//		CourseDescription description = courseDescriptionRepo.getById(courseDetails.getDescriptionid());
+//		ImageDetails imgDetails = imgRepo.getById(description.getImgid());
+//		return new CompleteCourseDetails(description, courseDetails, imgDetails.getPicbyte());
+//	}
+	@GetMapping(path = "/completeCourse/All")
+	public List<CompleteCourseDetails> getAllCompleteCourseDetails() {
+		
+		return courseService.getApproved().stream().map(app->{
+			CourseDescription description = courseDescriptionRepo.getById(app.getDescriptionid());
+			try {
+				return new CompleteCourseDetails(description, app, 
+						imgController.getImage(description.getImgid()));
+			} catch (IOException e) {
+
+			}
+			return null;
+		}).collect(Collectors.toList());
+		
+	}
+
 	@GetMapping
 	public List<CourseDetails> getAllCourse() {
 		return courseService.getAllCourse();
@@ -58,6 +107,11 @@ public class CourseDetailsController {
 	@GetMapping(path = "/unapproved")
 	public List<CourseDetails> getUnapproved() {
 		return courseService.getUnApprovedCourse();
+	}
+	
+	@GetMapping(path = "/approved")
+	public List<CourseDetails> getApproved() {
+		return courseService.getApproved();
 	}
 
 	@GetMapping(path = "/active")
@@ -91,6 +145,7 @@ public class CourseDetailsController {
 		existing.setCourseFee(courseDetails.getCourseFee());
 		existing.setStatus(courseDetails.getStatus());// changing here
 		existing.setApproveStatus(courseDetails.getApproveStatus());
+		existing.setDescriptionid(courseDetails.getDescriptionid());
 		existing.setApproveDate(new Date());
 		courseService.updateCourse(existing);
 	}
@@ -102,6 +157,7 @@ public class CourseDetailsController {
 		existing.setCourseFee(courseDetails.getCourseFee());
 		existing.setStatus(courseDetails.getStatus());// changing here
 		existing.setApproveStatus(courseDetails.getApproveStatus());
+		existing.setDescriptionid(courseDetails.getDescriptionid());
 		courseService.updateCourse(existing);
 		return new ResponseEntity<CourseDetails>(existing, HttpStatus.OK);
 	}

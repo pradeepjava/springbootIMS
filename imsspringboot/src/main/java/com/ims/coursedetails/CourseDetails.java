@@ -1,5 +1,6 @@
 package com.ims.coursedetails;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -15,7 +16,11 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @Entity(name = "coursedetails")
-public class CourseDetails {
+
+public class CourseDetails{
+	/**
+	 * 
+	 */
 	@Id
 	@GeneratedValue
 	@Column(name = "courseid")
@@ -30,6 +35,8 @@ public class CourseDetails {
 	String approveStatus = "Unapproved";
 	@Column(name = "approvedate")
 	Date approveDate;
+	@Column(name = "descriptionid")
+	Integer descriptionid=0;
 
 	public CourseDetails(int id) {
 		this.courseId = id;

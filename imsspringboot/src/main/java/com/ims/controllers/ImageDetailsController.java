@@ -33,13 +33,12 @@ public class ImageDetailsController {
 	ImageRepo imageRepository;
 
 	@PostMapping(path="/upload")
-	public ResponseEntity.BodyBuilder uplaodImage(@RequestParam("imageFile") MultipartFile file) throws IOException {
+	public int uplaodImage(@RequestParam("imageFile") MultipartFile file) throws IOException {
 
 		System.out.println("Original Image Byte Size - " + file.getBytes().length);
 		ImageDetails img = new ImageDetails(0,file.getOriginalFilename(), file.getContentType(),
 				compressBytes(file.getBytes()));
-		imageRepository.save(img);
-		return ResponseEntity.status(HttpStatus.OK);
+		return imageRepository.save(img).getImageid();
 	}
 
 	@GetMapping(path = { "/get/{imgId}" })

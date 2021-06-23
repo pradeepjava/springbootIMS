@@ -50,6 +50,10 @@ public class CourseDetailsService {
 	}
 
 	public List<CourseDetails> serchCourseContainingName(String text) {
-		return repo.findAllActiveUsers(text);
+		return repo.findAllActiveUsers(text.toUpperCase());
+	}
+
+	public List<CourseDetails> getApproved() {
+		return repo.findAllByApproveStatus("Approved");
 	}
 }

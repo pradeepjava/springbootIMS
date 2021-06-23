@@ -13,7 +13,7 @@ public interface CourseDetailsRepository extends JpaRepository<CourseDetails, In
 	List<CourseDetails>findAllByStatus(String status);
 	Optional<CourseDetails>getByCourseName(String courseName);
 	
-	@Query(value="select * from coursedetails where coursename like %:text%", nativeQuery = true)
+	@Query(value="select * from coursedetails where UPPER(coursename) like %:text%", nativeQuery = true)
 	List<CourseDetails>findAllActiveUsers(@Param("text") String text);
 	
 	@Query(value="select * from coursedetails where status='Active' and approvestatus=:text", nativeQuery = true)
